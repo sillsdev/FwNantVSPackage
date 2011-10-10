@@ -184,6 +184,10 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="LICENSING.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="Resources\Images_32bit.png" />
     <Content Include="Resources\Package.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

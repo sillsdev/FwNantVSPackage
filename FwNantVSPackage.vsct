@@ -1,4 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- <copyright from='2011' to='2011' company='SIL International'>
+Copyright (c) 2011, SIL International. All Rights Reserved.
+
+Distributable under the terms of either the Eclipse Public License (EPL-1.0) or the
+GNU Lesser General Public License (LGPLv3), as specified in the LICENSING.txt file.
+</copyright>
+-->
 <CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<!--  This is the file that defines the actual layout and type of the commands.

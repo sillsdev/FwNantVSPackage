@@ -1,4 +1,10 @@
-﻿// Guids.cs
+﻿// <copyright from='2011' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Eclipse Public License (EPL-1.0) or the
+//		GNU Lesser General Public License (LGPLv3), as specified in the LICENSING.txt file.
+// </copyright>
+// Guids.cs
 // MUST match guids.h
 using System;
 

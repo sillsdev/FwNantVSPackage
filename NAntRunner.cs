@@ -1,13 +1,9 @@
-﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2003' company='SIL International'>
-//		Copyright (c) 2003, SIL International. All Rights Reserved.
+﻿// <copyright from='2011' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of either the Eclipse Public License (EPL-1.0) or the
+//		GNU Lesser General Public License (LGPLv3), as specified in the LICENSING.txt file.
 // </copyright>
-#endregion
-// --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +16,7 @@ namespace SIL.FwNantVSPackage
 	/// <summary>
 	/// Start NAnt
 	/// </summary>
-	internal class NantRunner
+	internal class NantRunner: IDisposable
 	{
 		private readonly string m_ProgramFileName;
 		private readonly string m_CommandLine;
@@ -54,6 +50,54 @@ namespace SIL.FwNantVSPackage
 			BuildStatusChange += handler;
 		}
 
+		#region IDisposable Members & Co.
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting 
+		/// unmanaged resources.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue 
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="T:SIL.FwNantVSPackage.NantRunner"/> is reclaimed by garbage collection.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		~NantRunner()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Disposes the specified disposing.
+		/// </summary>
+		/// <param name="disposing">if set to <c>true</c> [disposing].</param>
+		/// ------------------------------------------------------------------------------------
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// Dispose managed resources here
+				if (m_Process != null)
+					m_Process.Dispose();
+			}
+			m_Process = null;
+		}
+		#endregion
+
 		/// <summary>
 		/// Sets the StartInfo Options and returns a new Process that can be run.
 		/// </summary>
@@ -72,6 +116,7 @@ namespace SIL.FwNantVSPackage
 		}
 
 		//Starts the process and handles errors.
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		protected virtual Process StartProcess()
 		{
 			var p = new Process();

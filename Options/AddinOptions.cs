@@ -1,3 +1,9 @@
+// <copyright from='2011' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Eclipse Public License (EPL-1.0) or the
+//		GNU Lesser General Public License (LGPLv3), as specified in the LICENSING.txt file.
+// </copyright>
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -12,7 +18,7 @@ namespace SIL.FwNantVSPackage
 	/// Summary description for AddinOptions.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class AddinOptions : UserControl, IDTToolsOptionsPage
+	public class AddinOptions : UserControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -26,7 +32,6 @@ namespace SIL.FwNantVSPackage
 		private Button chooseDir;
 		private Button moveUp;
 		private Button moveDown;
-		private DTE m_dte;
 		private TextBox edtNantPath;
 		private Button btnChooserNant;
 		private OpenFileDialog openFileDialog;
@@ -43,7 +48,7 @@ namespace SIL.FwNantVSPackage
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-			lock (this)
+			lock (components)
 			{
 				edtNantPath.Text = Settings.Default.NantPath;
 				buildFile.Text = Settings.Default.BuildFile;
@@ -88,6 +93,7 @@ namespace SIL.FwNantVSPackage
 		/// the contents of this method with the code editor.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		private void InitializeComponent()
 		{
 			Label lblBuildFile;
@@ -276,74 +282,6 @@ namespace SIL.FwNantVSPackage
 			this.PerformLayout();
 
 		}
-		#endregion
-
-		#region Implementation of IDTToolsOptionsPage interface
-
-		/// ------------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the properties.
-		/// </summary>
-		/// <param name="propertiesObject">The properties object.</param>
-		/// ------------------------------------------------------------------------------------------
-		void IDTToolsOptionsPage.GetProperties(ref object propertiesObject)
-		{
-			propertiesObject = null;
-		}
-
-
-		/// ------------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called after handle to options page was created.
-		/// </summary>
-		/// <param name="dte">The ApplicationObject.</param>
-		/// ------------------------------------------------------------------------------------------
-		void IDTToolsOptionsPage.OnAfterCreated(DTE dte)
-		{
-			m_dte = dte;
-		}
-
-		/// ------------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when options dialog was cancelled.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------------
-		void IDTToolsOptionsPage.OnCancel()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when Help button is pressed.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------------
-		void IDTToolsOptionsPage.OnHelp()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when options dialog gets closed with OK button.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------------
-		void IDTToolsOptionsPage.OnOK()
-		{
-			try
-			{
-				Settings.Default.NantPath = edtNantPath.Text;
-				Settings.Default.BuildFile = buildFile.Text;
-				Settings.Default.TargetFramework = edtTargetFramework.Text;
-				Settings.Default.BaseDirectories.Clear();
-				foreach (string s in baseDirectories.Items)
-					Settings.Default.BaseDirectories.Add(s);
-				Settings.Default.Save();
-			}
-			catch(Exception e)
-			{
-				System.Diagnostics.Debug.WriteLine(e.Message);
-			}
-		}
-
 		#endregion
 
 		/// ------------------------------------------------------------------------------------------

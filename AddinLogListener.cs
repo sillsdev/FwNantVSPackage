@@ -1,4 +1,10 @@
-﻿using System;
+﻿// <copyright from='2011' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Eclipse Public License (EPL-1.0) or the
+//		GNU Lesser General Public License (LGPLv3), as specified in the LICENSING.txt file.
+// </copyright>
+using System;
 using System.Text.RegularExpressions;
 
 namespace SIL.FwNantVSPackage
@@ -8,7 +14,7 @@ namespace SIL.FwNantVSPackage
 	/// Log messages during a <c>NAnt</c> build
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal class AddinLogListener
+	internal class AddinLogListener: IDisposable
 	{
 		private PaneWriter m_BuildOutputWindow;
 		private readonly NAntBuild m_Parent;
@@ -40,6 +46,54 @@ namespace SIL.FwNantVSPackage
 		{
 			m_Parent = parent;
 		}
+
+		#region IDisposable Members & Co.
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting 
+		/// unmanaged resources.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public void Dispose()
+		{
+			Dispose(true);
+			// This object will be cleaned up by the Dispose method.
+			// Therefore, you should call GC.SupressFinalize to
+			// take this object off the finalization queue 
+			// and prevent finalization code for this object
+			// from executing a second time.
+			GC.SuppressFinalize(this);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="T:SIL.FwNantVSPackage.AddinLogListener"/> is reclaimed by garbage collection.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		~AddinLogListener()
+		{
+			Dispose(false);
+			// The base class finalizer is called automatically.
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Disposes the specified disposing.
+		/// </summary>
+		/// <param name="disposing">if set to <c>true</c> [disposing].</param>
+		/// ------------------------------------------------------------------------------------
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// Dispose managed resources here
+				if (m_BuildOutputWindow != null)
+					m_BuildOutputWindow.Dispose();
+			}
+			m_BuildOutputWindow = null;
+		}
+		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

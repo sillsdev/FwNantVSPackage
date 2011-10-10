@@ -1,3 +1,9 @@
+// <copyright from='2011' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Eclipse Public License (EPL-1.0) or the
+//		GNU Lesser General Public License (LGPLv3), as specified in the LICENSING.txt file.
+// </copyright>
 using System;
 using System.IO;
 using System.Threading;
@@ -13,6 +19,7 @@ namespace SIL.FwNantVSPackage
 		private IServiceProvider Parent { get; set; }
 		private PaneWriter m_OutputBuild;
 		private NantRunner m_nantRunner;
+		private AddinLogListener m_LogListener;
 		internal event NantRunner.BuildStatusHandler BuildStatusChange;
 
 		private const string NAnt = "nant.exe";
@@ -66,8 +73,14 @@ namespace SIL.FwNantVSPackage
 				// Dispose managed resources here
 				if (m_OutputBuild != null)
 					m_OutputBuild.Dispose();
+				if (m_LogListener != null)
+					m_LogListener.Dispose();
+				if (m_nantRunner != null)
+					m_nantRunner.Dispose();
 			}
 			m_OutputBuild = null;
+			m_LogListener = null;
+			m_nantRunner = null;
 		}
 
 		#endregion
@@ -215,8 +228,9 @@ namespace SIL.FwNantVSPackage
 
 				StartBuild(string.Format("------ Build started: {0} ------\n", cmdLine));
 				OutputBuild.Activate();
+				m_LogListener = new AddinLogListener(this);
 				m_nantRunner = new NantRunner(NAnt, cmdLine, workingDir,
-					new AddinLogListener(this),
+					m_LogListener,
 					BuildStatusChange);
 				m_nantRunner.Run();
 			}

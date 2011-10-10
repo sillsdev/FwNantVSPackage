@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// <copyright from='2011' to='2011' company='SIL International'>
+//		Copyright (c) 2011, SIL International. All Rights Reserved.
+//
+//		Distributable under the terms of either the Eclipse Public License (EPL-1.0) or the
+//		GNU Lesser General Public License (LGPLv3), as specified in the LICENSING.txt file.
+// </copyright>
+using System;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.ComponentModel.Design;
-using Microsoft.Win32;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
-using System.Collections.Specialized;
 
 namespace SIL.FwNantVSPackage
 {
@@ -25,7 +25,7 @@ namespace SIL.FwNantVSPackage
 	/// </summary>
 	// This attribute tells the PkgDef creation utility (CreatePkgDef.exe) that this class is
 	// a package.
-	[PackageRegistration(UseManagedResourcesOnly = true)]
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable"), PackageRegistration(UseManagedResourcesOnly = true)]
 	// This attribute is used to register the informations needed to show the this package
 	// in the Help/About dialog of Visual Studio.
 	[InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
@@ -37,7 +37,7 @@ namespace SIL.FwNantVSPackage
 	public sealed class FwNantVSPackagePackage : Package
 	{
 		private string m_ComboValue;
-		private readonly NAntBuild m_NantBuild;
+		private NAntBuild m_NantBuild;
 		private MenuCommand CancelBtn { get; set; }
 
 		/// <summary>
@@ -54,7 +54,14 @@ namespace SIL.FwNantVSPackage
 			m_NantBuild.BuildStatusChange += OnBuildStatusChange;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && m_NantBuild != null)
+				m_NantBuild.Dispose();
 
+			m_NantBuild = null;
+			base.Dispose(disposing);
+		}
 
 		/////////////////////////////////////////////////////////////////////////////
 		// Overriden Package Implementation
