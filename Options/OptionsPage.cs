@@ -30,7 +30,7 @@ namespace SIL.FwNantVSPackage.Options
 		protected override void OnApply(PageApplyEventArgs e)
 		{
 			base.OnApply(e);
-			((IDTToolsOptionsPage)m_AddinOptions).OnOK();
+			m_AddinOptions.OnApply();
 		}
 	}
 }

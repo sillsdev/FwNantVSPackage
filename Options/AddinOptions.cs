@@ -459,5 +459,28 @@ namespace SIL.FwNantVSPackage
 			}
 
 		}
+
+		/// ------------------------------------------------------------------------------------------
+		/// <summary>
+		/// Called when options dialog gets closed with OK button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------------
+		public void OnApply()
+		{
+			try
+			{
+				Settings.Default.NantPath = edtNantPath.Text;
+				Settings.Default.BuildFile = buildFile.Text;
+				Settings.Default.TargetFramework = edtTargetFramework.Text;
+				Settings.Default.BaseDirectories.Clear();
+				foreach (string s in baseDirectories.Items)
+					Settings.Default.BaseDirectories.Add(s);
+				Settings.Default.Save();
+			}
+			catch(Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine(e.Message);
+			}
+		}
 	}
 }

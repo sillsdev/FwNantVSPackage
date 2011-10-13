@@ -1,0 +1,4 @@
+*.cs    diff=csharp
+*.csproj -whitespace
+*.resx -whitespace
+*.Designer.cs -whitespace
