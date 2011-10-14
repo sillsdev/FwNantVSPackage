@@ -1,4 +1,9 @@
 *.cs    diff=csharp
+
 *.csproj -whitespace
 *.resx -whitespace
 *.Designer.cs -whitespace
+*.vdproj -whitespace
+*.config -whitespace
+*.settings -whitespace
+*.ReSharper -whitespace

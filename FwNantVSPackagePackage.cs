@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
 
@@ -49,7 +50,8 @@ namespace SIL.FwNantVSPackage
 		/// </summary>
 		public FwNantVSPackagePackage()
 		{
-			Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
+			Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this));
+			CheckForUpdates();
 			m_NantBuild = new NAntBuild(this);
 			m_NantBuild.BuildStatusChange += OnBuildStatusChange;
 		}
@@ -73,28 +75,28 @@ namespace SIL.FwNantVSPackage
 		/// </summary>
 		protected override void Initialize()
 		{
-			Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
+			Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this));
 			base.Initialize();
 
 			// Add our command handlers for menu (commands must exist in the .vsct file)
-			OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+			var mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
 			if (null != mcs)
 			{
 				// Create the command for the menu item.
-				CommandID menuCommandID = new CommandID(GuidList.guidFwNantVSPackageCmdSet, PkgCmdIDList.cmdidCancel);
-				CancelBtn = new MenuCommand(OnBuildCancel, menuCommandID) { Enabled = false };
+				var menuCommandId = new CommandID(GuidList.guidFwNantVSPackageCmdSet, PkgCmdIDList.cmdidCancel);
+				CancelBtn = new MenuCommand(OnBuildCancel, menuCommandId) { Enabled = false };
 				mcs.AddCommand(CancelBtn);
 
-				menuCommandID = new CommandID(GuidList.guidFwNantVSPackageCmdSet, PkgCmdIDList.cmdidTarget);
-				MenuCommand menuItem = new OleMenuCommand(ComboHandler, menuCommandID);
+				menuCommandId = new CommandID(GuidList.guidFwNantVSPackageCmdSet, PkgCmdIDList.cmdidTarget);
+				MenuCommand menuItem = new OleMenuCommand(ComboHandler, menuCommandId);
 				mcs.AddCommand(menuItem);
 
-				menuCommandID = new CommandID(GuidList.guidFwNantVSPackageCmdSet, PkgCmdIDList.cmdidTargetGetList);
-				menuItem = new OleMenuCommand(ComboHandlerGetList, menuCommandID);
+				menuCommandId = new CommandID(GuidList.guidFwNantVSPackageCmdSet, PkgCmdIDList.cmdidTargetGetList);
+				menuItem = new OleMenuCommand(ComboHandlerGetList, menuCommandId);
 				mcs.AddCommand(menuItem);
 
-				menuCommandID = new CommandID(GuidList.guidFwNantVSPackageCmdSet, PkgCmdIDList.cmdidStartBuild);
-				menuItem = new MenuCommand(OnStartBuild, menuCommandID);
+				menuCommandId = new CommandID(GuidList.guidFwNantVSPackageCmdSet, PkgCmdIDList.cmdidStartBuild);
+				menuItem = new MenuCommand(OnStartBuild, menuCommandId);
 				mcs.AddCommand(menuItem);
 			}
 		}
@@ -179,6 +181,49 @@ namespace SIL.FwNantVSPackage
 		private void OnBuildStatusChange(bool fFinished)
 		{
 			CancelBtn.Enabled = !fFinished;
+		}
+
+		/// ------------------------------------------------------------------------------------------
+		/// <summary>
+		/// Checks for new updates.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------------
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+		private void CheckForUpdates()
+		{
+			using (var options = new AddinOptions())
+			{
+				// find the update file
+				if (options.BaseDirectories == null)
+					return;
+
+				var i = 0;
+				var updater = string.Empty;
+				for (; i < options.BaseDirectories.Length; i++)
+				{
+					updater = Path.Combine(options.BaseDirectories[0], @"Bin\VS Addins\FwVsUpdateChecker.exe");
+					if (File.Exists(updater))
+						break;
+				}
+				if (i >= options.BaseDirectories.Length || string.IsNullOrEmpty(updater))
+					return;
+
+				var process = new Process();
+				process.StartInfo.FileName = updater;
+				process.StartInfo.CreateNoWindow = true;
+				process.StartInfo.WorkingDirectory = Path.GetDirectoryName(updater);
+				if (Settings.Default.FirstTime)
+					process.StartInfo.Arguments = "/first " + options.BaseDirectories[i];
+				else
+					process.StartInfo.Arguments = options.BaseDirectories[i];
+				process.Start();
+
+				if (Settings.Default.FirstTime)
+				{
+					Settings.Default.FirstTime = false;
+					Settings.Default.Save();
+				}
+			}
 		}
 	}
 }
