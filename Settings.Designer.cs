@@ -8,117 +8,113 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SIL.FwNantVSPackage
-{
-
-
-	[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
-	internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-	{
-
-		private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-		public static Settings Default
-		{
-			get
-			{
-				return defaultInstance;
-			}
-		}
-
-		[global::System.Configuration.UserScopedSettingAttribute()]
-		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("Bld\\FieldWorks.build")]
-		public string BuildFile
-		{
-			get
-			{
-				return ((string)(this["BuildFile"]));
-			}
-			set
-			{
-				this["BuildFile"] = value;
-			}
-		}
-
-		[global::System.Configuration.UserScopedSettingAttribute()]
-		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		public global::System.Collections.Specialized.StringCollection BaseDirectories
-		{
-			get
-			{
-				return ((global::System.Collections.Specialized.StringCollection)(this["BaseDirectories"]));
-			}
-			set
-			{
-				this["BaseDirectories"] = value;
-			}
-		}
-
-		[global::System.Configuration.UserScopedSettingAttribute()]
-		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("True")]
-		public bool FirstTime
-		{
-			get
-			{
-				return ((bool)(this["FirstTime"]));
-			}
-			set
-			{
-				this["FirstTime"] = value;
-			}
-		}
-
-		[global::System.Configuration.UserScopedSettingAttribute()]
-		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("")]
-		public string NantPath
-		{
-			get
-			{
-				return ((string)(this["NantPath"]));
-			}
-			set
-			{
-				this["NantPath"] = value;
-			}
-		}
-
-		[global::System.Configuration.UserScopedSettingAttribute()]
-		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("net-3.5")]
-		public string TargetFramework
-		{
-			get
-			{
-				return ((string)(this["TargetFramework"]));
-			}
-			set
-			{
-				this["TargetFramework"] = value;
-			}
-		}
-
-		[global::System.Configuration.UserScopedSettingAttribute()]
-		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+namespace SIL.FwNantVSPackage {
+    
+    
+    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
+        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+        
+        public static Settings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Bld\\FieldWorks.build")]
+        public string BuildFile {
+            get {
+                return ((string)(this["BuildFile"]));
+            }
+            set {
+                this["BuildFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection BaseDirectories {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["BaseDirectories"]));
+            }
+            set {
+                this["BaseDirectories"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FirstTime {
+            get {
+                return ((bool)(this["FirstTime"]));
+            }
+            set {
+                this["FirstTime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NantPath {
+            get {
+                return ((string)(this["NantPath"]));
+            }
+            set {
+                this["NantPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("net-4.0")]
+        public string TargetFramework {
+            get {
+                return ((string)(this["TargetFramework"]));
+            }
+            set {
+                this["TargetFramework"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
 <ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
   <string>test all</string>
   <string>remakefw</string>
   <string>register build all</string>
 </ArrayOfString>")]
-		public global::System.Collections.Specialized.StringCollection BuildCommands
-		{
-			get
-			{
-				return ((global::System.Collections.Specialized.StringCollection)(this["BuildCommands"]));
-			}
-			set
-			{
-				this["BuildCommands"] = value;
-			}
-		}
-	}
+        public global::System.Collections.Specialized.StringCollection BuildCommands {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["BuildCommands"]));
+            }
+            set {
+                this["BuildCommands"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("$(SolutionDir)")]
+        public string DefaultBaseDirectory {
+            get {
+                return ((string)(this["DefaultBaseDirectory"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("$(SolutionDir)\\Bin\\nant\\bin")]
+        public string DefaultNantPath {
+            get {
+                return ((string)(this["DefaultNantPath"]));
+            }
+        }
+    }
 }

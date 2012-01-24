@@ -22,7 +22,6 @@ namespace SIL.FwNantVSPackage
 		private AddinLogListener m_LogListener;
 		internal event NantRunner.BuildStatusHandler BuildStatusChange;
 
-		private const string NAnt = "nant.exe";
 		private const string m_BuildPaneName = "NAnt build";
 
 		public NAntBuild(IServiceProvider parent)
@@ -85,16 +84,25 @@ namespace SIL.FwNantVSPackage
 
 		#endregion
 
+		private string NAnt
+		{
+			get
+			{
+				using (var addinOptions = new AddinOptions(Parent))
+					return addinOptions.NAntExe;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tries to find the buildfile based on the passed in path
 		/// </summary>
 		/// <param name="path">Path of the solution</param>
 		/// ------------------------------------------------------------------------------------
-		private static string RetrieveBuildFile(string path)
+		private string RetrieveBuildFile(string path)
 		{
 			// try to find the right base directory based on the project path
-			using (var options = new AddinOptions())
+			using (var options = new AddinOptions(Parent))
 			{
 				foreach (var baseDir in options.BaseDirectories)
 				{

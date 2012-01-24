@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace SIL.FwNantVSPackage
 {
@@ -37,20 +38,35 @@ namespace SIL.FwNantVSPackage
 		private OpenFileDialog openFileDialog;
 		private TextBox edtTargetFramework;
 		private FolderBrowserDialog folderBrowserDialog;
+		private IServiceProvider ServiceProvider { get; set; }
+		private const string NAnt = "NAnt.exe";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:AddinOptions"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public AddinOptions()
+		public AddinOptions(): this(null)
 		{
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:AddinOptions"/> class.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public AddinOptions(IServiceProvider serviceProvider)
+		{
+			ServiceProvider = serviceProvider;
+
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
 			lock (components)
 			{
-				edtNantPath.Text = Settings.Default.NantPath;
+				edtNantPath.Text = string.IsNullOrEmpty(Settings.Default.NantPath) ?
+					Settings.Default.DefaultNantPath : Settings.Default.NantPath;
+
 				buildFile.Text = Settings.Default.BuildFile;
 				edtTargetFramework.Text = string.IsNullOrEmpty(Settings.Default.TargetFramework) ?
 					"mono-3.5" : Settings.Default.TargetFramework;
@@ -64,7 +80,7 @@ namespace SIL.FwNantVSPackage
 					Settings.Default.BaseDirectories = new StringCollection();
 
 				if (baseDirectories.Items.Count == 0)
-					baseDirectories.Items.Add(@"c:\fw");
+					baseDirectories.Items.Add(Settings.Default.DefaultBaseDirectory);
 			}
 		}
 
@@ -238,9 +254,9 @@ namespace SIL.FwNantVSPackage
 			// openFileDialog
 			// 
 			this.openFileDialog.AddExtension = false;
-			this.openFileDialog.FileName = "nant.exe";
-			this.openFileDialog.Filter = "NAnt|nant.exe";
-			this.openFileDialog.Title = "Chose NAnt path";
+			this.openFileDialog.FileName = NAnt;
+			this.openFileDialog.Filter = "NAnt|" + NAnt;
+			this.openFileDialog.Title = "Choose NAnt path";
 			this.openFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.OnNAntPathOk);
 			// 
 			// label1
@@ -407,6 +423,35 @@ namespace SIL.FwNantVSPackage
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the path to the NAnt executable.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string NAntExe
+		{
+			get
+			{
+				var nantPath = ExpandVariable(edtNantPath.Text);
+				return Path.Combine(nantPath, NAnt);
+			}
+		}
+
+		private string ExpandVariable(string input)
+		{
+			if (input.StartsWith("$(SolutionDir)") && ServiceProvider != null)
+			{
+				var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
+				if (solution != null)
+				{
+					object solutionPath;
+					solution.GetProperty((int)__VSPROPID.VSPROPID_SolutionDirectory, out solutionPath);
+					return input.Replace("$(SolutionDir)", solutionPath as string);
+				}
+			}
+			return input;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the base directories.
 		/// </summary>
 		/// <value>The base directories.</value>
@@ -418,23 +463,26 @@ namespace SIL.FwNantVSPackage
 				var dirs = new string[baseDirectories.Items.Count];
 				int i = 0;
 				foreach(string str in baseDirectories.Items)
-					dirs[i++] = str;
+					dirs[i++] = ExpandVariable(str);
 				return dirs;
 			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called when the user presses the select directory button to choose the path to 
+		/// Called when the user presses the select directory button to choose the path to
 		/// NAnt.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event 
+		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void OnSelectNantPath(object sender, EventArgs e)
 		{
-			openFileDialog.InitialDirectory = edtNantPath.Text.Length > 0 ? edtNantPath.Text : @"c:\fw\Bin\nant\bin";
+			var initialDir = ExpandVariable(string.IsNullOrEmpty(edtNantPath.Text) ?
+				Settings.Default.DefaultNantPath : edtNantPath.Text);
+
+			openFileDialog.InitialDirectory = initialDir;
 			DialogResult result = openFileDialog.ShowDialog();
 			if (result == DialogResult.OK)
 				edtNantPath.Text = Path.GetDirectoryName(openFileDialog.FileName);
@@ -445,16 +493,15 @@ namespace SIL.FwNantVSPackage
 		/// Called to check the path the user selected in the NAnt path dialog
 		/// </summary>
 		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="T:System.ComponentModel.CancelEventArgs"/> instance 
+		/// <param name="e">The <see cref="T:System.ComponentModel.CancelEventArgs"/> instance
 		/// containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void OnNAntPathOk(object sender, CancelEventArgs e)
 		{
-			if (!File.Exists(Path.Combine(Path.GetDirectoryName(openFileDialog.FileName),
-				"nant.exe")))
+			if (!File.Exists(Path.Combine(Path.GetDirectoryName(openFileDialog.FileName), NAnt)))
 			{
-				MessageBox.Show("NAnt.exe doesn't exist in directory\n" + 
-					Path.GetDirectoryName(openFileDialog.FileName), "Can't find nant.exe");
+				MessageBox.Show(NAnt + " doesn't exist in directory\n" +
+					Path.GetDirectoryName(openFileDialog.FileName), "Can't find " + NAnt);
 				e.Cancel = true;
 			}
 

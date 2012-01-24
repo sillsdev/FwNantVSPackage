@@ -191,7 +191,7 @@ namespace SIL.FwNantVSPackage
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		private void CheckForUpdates()
 		{
-			using (var options = new AddinOptions())
+			using (var options = new AddinOptions(this))
 			{
 				// find the update file
 				if (options.BaseDirectories == null)
