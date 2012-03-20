@@ -40,6 +40,7 @@ namespace SIL.FwNantVSPackage
 		private FolderBrowserDialog folderBrowserDialog;
 		private IServiceProvider ServiceProvider { get; set; }
 		private const string NAnt = "NAnt.exe";
+		private const string SolutionDir = "$(SolutionDir)";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -437,17 +438,27 @@ namespace SIL.FwNantVSPackage
 
 		private string ExpandVariable(string input)
 		{
-			if (input.StartsWith("$(SolutionDir)") && ServiceProvider != null)
+			if (input.StartsWith(SolutionDir) && ServiceProvider != null)
 			{
 				var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
 				if (solution != null)
 				{
 					object solutionPathObj;
 					solution.GetProperty((int)__VSPROPID.VSPROPID_SolutionDirectory, out solutionPathObj);
-					var solutionPath = ((string)solutionPathObj).TrimEnd(
-						Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-					return input.Replace("$(SolutionDir)", solutionPath);
+					if (solutionPathObj != null)
+					{
+						var solutionPath = ((string)solutionPathObj).TrimEnd(
+							Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+						return input.Replace(SolutionDir, solutionPath);
+					}
 				}
+				// If we don't have a solution open, we replace the variable with the
+				// first base directory
+				if (BaseDirectories.Length > 0 && !BaseDirectories[0].Contains(SolutionDir))
+					return input.Replace(SolutionDir, BaseDirectories[0]);
+
+				return input.Replace(SolutionDir, string.Empty).Trim(Path.DirectorySeparatorChar,
+					Path.AltDirectorySeparatorChar);
 			}
 			return input;
 		}
