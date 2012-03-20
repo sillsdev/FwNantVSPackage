@@ -252,14 +252,11 @@ namespace SIL.FwNantVSPackage
 					string msg = string.Format("{0} had errors: {1}", m_ProgramFileName, e.Message);
 					m_Log.WriteLine(msg);
 				}
-
-				throw;
 			}
 			catch (Exception e)
 			{
 				string msg = string.Format("{0} had errors: {1}", m_ProgramFileName, e.Message);
 				m_Log.WriteLine(msg);
-				throw new Exception(msg, e);
 			}
 			finally
 			{

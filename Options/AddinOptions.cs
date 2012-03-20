@@ -442,9 +442,11 @@ namespace SIL.FwNantVSPackage
 				var solution = ServiceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
 				if (solution != null)
 				{
-					object solutionPath;
-					solution.GetProperty((int)__VSPROPID.VSPROPID_SolutionDirectory, out solutionPath);
-					return input.Replace("$(SolutionDir)", solutionPath as string);
+					object solutionPathObj;
+					solution.GetProperty((int)__VSPROPID.VSPROPID_SolutionDirectory, out solutionPathObj);
+					var solutionPath = ((string)solutionPathObj).TrimEnd(
+						Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+					return input.Replace("$(SolutionDir)", solutionPath);
 				}
 			}
 			return input;

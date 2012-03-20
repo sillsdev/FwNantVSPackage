@@ -101,20 +101,27 @@ namespace SIL.FwNantVSPackage
 		/// ------------------------------------------------------------------------------------
 		private string RetrieveBuildFile(string path)
 		{
-			// try to find the right base directory based on the project path
 			using (var options = new AddinOptions(Parent))
 			{
+				// try the solution path
+				var buildFile = path != null ?
+					Path.Combine(Path.GetDirectoryName(path), options.Buildfile) : string.Empty;
+				if (File.Exists(buildFile))
+					return buildFile;
+
+				// try to find the right base directory based on the project path
 				foreach (var baseDir in options.BaseDirectories)
 				{
 					var dirToTest = baseDir + "\\";
-					if (path.ToLower().StartsWith(dirToTest.ToLower()))
+					if (path == null || path.ToLower().StartsWith(dirToTest.ToLower()))
 					{
 						return Path.GetFullPath(Path.Combine(baseDir, options.Buildfile));
 					}
 				}
 
 				// no success, so take first base directory that we have, or just build file
-				return Path.GetFullPath(options.BaseDirectories.Length > 0 ? 
+				return Path.GetFullPath(options.BaseDirectories.Length > 0 &&
+					Directory.Exists(options.BaseDirectories[0])?
 					Path.Combine(options.BaseDirectories[0], options.Buildfile) :
 					options.Buildfile);
 			}
