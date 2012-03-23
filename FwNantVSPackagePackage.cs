@@ -232,7 +232,7 @@ namespace SIL.FwNantVSPackage
 				var updater = string.Empty;
 				for (; i < options.BaseDirectories.Length; i++)
 				{
-					updater = Path.Combine(options.BaseDirectories[0], @"Bin\VS Addins\FwVsUpdateChecker.exe");
+					updater = Path.Combine(options.BaseDirectories[i], @"Bin\VS Addins\FwVsUpdateChecker.exe");
 					if (File.Exists(updater))
 						break;
 				}
