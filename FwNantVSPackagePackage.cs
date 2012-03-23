@@ -35,6 +35,7 @@ namespace SIL.FwNantVSPackage
 	[ProvideMenuResource("Menus.ctmenu", 1)]
 	[ProvideOptionPage(typeof(Options.OptionsPage), "FwNAnt", "General", 101, 106, true)]
 	[ProvideOptionPage(typeof(Options.RemoveCommandsPage), "FwNAnt", "Remove Comands", 102, 107, true)]
+	[ProvideOptionPage(typeof(Options.EnvironmentPage), "FwNAnt", "Environment", 103, 108, true)]
 	[Guid(GuidList.guidFwNantVSPackagePkgString)]
 	public sealed class FwNantVSPackagePackage : Package
 	{

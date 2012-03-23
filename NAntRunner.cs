@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Collections.Specialized;
 
 namespace SIL.FwNantVSPackage
 {
@@ -113,6 +114,20 @@ namespace SIL.FwNantVSPackage
 			process.StartInfo.UseShellExecute = false;
 			process.StartInfo.CreateNoWindow = true;
 			process.StartInfo.WorkingDirectory = m_WorkingDirectory;
+			SetEnvironmentVariables(process.StartInfo.EnvironmentVariables);
+		}
+
+		protected void SetEnvironmentVariables(StringDictionary environment)
+		{
+			foreach (var variable in Settings.Default.EnvironmentVariables)
+			{
+				var parts = variable.Split('=');
+				if (parts.Length < 2)
+					continue;
+				var name = parts[0];
+				var value = parts[1];
+				environment[name] = value;
+			}
 		}
 
 		//Starts the process and handles errors.

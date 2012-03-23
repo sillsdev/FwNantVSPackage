@@ -119,6 +119,15 @@
     <Compile Include="Options\AddinOptions.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Options\EnvironmentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\EnvironmentControl.Designer.cs">
+      <DependentUpon>EnvironmentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\EnvironmentPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Options\OptionsPage.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -151,6 +160,9 @@
     <EmbeddedResource Include="Options\AddinOptions.resx">
       <DependentUpon>AddinOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\EnvironmentControl.resx">
+      <DependentUpon>EnvironmentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Options\RemoveCommandsControl.resx">
       <DependentUpon>RemoveCommandsControl.cs</DependentUpon>
