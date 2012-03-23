@@ -109,6 +109,7 @@ GNU Lesser General Public License (LGPLv3), as specified in the LICENSING.txt fi
 				<CommandFlag>CommandWellOnly</CommandFlag>
 				<CommandFlag>StretchHorizontally</CommandFlag>
 				<CommandFlag>CaseSensitive</CommandFlag>
+				<CommandFlag>FilterKeys</CommandFlag>
 				<Strings>
 					<CommandName>Targets</CommandName>
 					<ButtonText>Enter the targets to build</ButtonText>

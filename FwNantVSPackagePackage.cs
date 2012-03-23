@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace SIL.FwNantVSPackage
 {
@@ -126,20 +127,50 @@ namespace SIL.FwNantVSPackage
 				return;
 
 			var output = eventArgs.OutValue;
-			var input = eventArgs.InValue;
-			if (input != null)
+			var inputs = eventArgs.InValue as object[];
+			if (inputs != null && inputs.Length == 5)
 			{
-				var newCommand = input.ToString();
-				m_ComboValue = newCommand;
-				if (!Settings.Default.BuildCommands.Contains(newCommand))
-					Settings.Default.BuildCommands.Add(newCommand);
-				Settings.Default.Save();
+				// see http://social.msdn.microsoft.com/Forums/en/vsx/thread/2c95ef82-d8da-4a4f-beef-0d40574a1abd
+				// input is an array of 5 objects:
+				// [0] = HWND (int, it will always be 0 as we have no HWND for the combo's edit box)
+				// [1] = the filterkeys message (int)
+				// [2] = the wParam of the windows message
+				// [3] = the lParam of the windows message
+				// [4] = the current text in the control area
+				var message = (__FILTERKEYSMESSAGES)inputs[1];
+				switch (message)
+				{
+					case __FILTERKEYSMESSAGES.FilterKeysMessage_GotFocus:
+					case __FILTERKEYSMESSAGES.FilterKeysMessage_LostFocus:
+					case __FILTERKEYSMESSAGES.FilterKeysMessage_KeyDown:
+					case __FILTERKEYSMESSAGES.FilterKeysMessage_SysKeyDown:
+					case __FILTERKEYSMESSAGES.FilterKeysMessage_Character:
+						// we're not interested in these messages
+						break;
+					case __FILTERKEYSMESSAGES.FilterKeysMessage_TextChanged:
+					{
+						SetCommand((string)inputs[4]);
+						break;
+					}
+				}
+			}
+			else if (eventArgs.InValue is string)
+			{
+				SetCommand((string)eventArgs.InValue);
 			}
 			else if (output != IntPtr.Zero)
 			{
 				Marshal.GetNativeVariantForObject(m_ComboValue,
 					output);
 			}
+		}
+
+		private void SetCommand(string newCommand)
+		{
+			m_ComboValue = newCommand;
+			if (!Settings.Default.BuildCommands.Contains(newCommand) && !string.IsNullOrEmpty(newCommand))
+				Settings.Default.BuildCommands.Add(newCommand);
+			Settings.Default.Save();
 		}
 
 		private void ComboHandlerGetList(object sender, EventArgs e)
@@ -188,7 +219,6 @@ namespace SIL.FwNantVSPackage
 		/// Checks for new updates.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------------
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		private void CheckForUpdates()
 		{
 			using (var options = new AddinOptions(this))
@@ -208,15 +238,17 @@ namespace SIL.FwNantVSPackage
 				if (i >= options.BaseDirectories.Length || string.IsNullOrEmpty(updater))
 					return;
 
-				var process = new Process();
-				process.StartInfo.FileName = updater;
-				process.StartInfo.CreateNoWindow = true;
-				process.StartInfo.WorkingDirectory = Path.GetDirectoryName(updater);
-				if (Settings.Default.FirstTime)
-					process.StartInfo.Arguments = "/first " + options.BaseDirectories[i];
-				else
-					process.StartInfo.Arguments = options.BaseDirectories[i];
-				process.Start();
+				using (var process = new Process())
+				{
+					process.StartInfo.FileName = updater;
+					process.StartInfo.CreateNoWindow = true;
+					process.StartInfo.WorkingDirectory = Path.GetDirectoryName(updater);
+					if (Settings.Default.FirstTime)
+						process.StartInfo.Arguments = "/first " + options.BaseDirectories[i];
+					else
+						process.StartInfo.Arguments = options.BaseDirectories[i];
+					process.Start();
+				}
 
 				if (Settings.Default.FirstTime)
 				{
