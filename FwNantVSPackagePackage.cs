@@ -142,13 +142,13 @@ namespace SIL.FwNantVSPackage
 				switch (message)
 				{
 					case __FILTERKEYSMESSAGES.FilterKeysMessage_GotFocus:
-					case __FILTERKEYSMESSAGES.FilterKeysMessage_LostFocus:
 					case __FILTERKEYSMESSAGES.FilterKeysMessage_KeyDown:
 					case __FILTERKEYSMESSAGES.FilterKeysMessage_SysKeyDown:
 					case __FILTERKEYSMESSAGES.FilterKeysMessage_Character:
+					case __FILTERKEYSMESSAGES.FilterKeysMessage_TextChanged:
 						// we're not interested in these messages
 						break;
-					case __FILTERKEYSMESSAGES.FilterKeysMessage_TextChanged:
+					case __FILTERKEYSMESSAGES.FilterKeysMessage_LostFocus:
 					{
 						SetCommand((string)inputs[4]);
 						break;
