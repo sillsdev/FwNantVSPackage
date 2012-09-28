@@ -454,13 +454,31 @@ namespace SIL.FwNantVSPackage
 				}
 				// If we don't have a solution open, we replace the variable with the
 				// first base directory
-				if (BaseDirectories.Length > 0 && !BaseDirectories[0].Contains(SolutionDir))
-					return input.Replace(SolutionDir, BaseDirectories[0]);
+				if (InternalBaseDirectories.Length > 0 && !InternalBaseDirectories[0].Contains(SolutionDir))
+					return input.Replace(SolutionDir, InternalBaseDirectories[0]);
 
 				return input.Replace(SolutionDir, string.Empty).Trim(Path.DirectorySeparatorChar,
 					Path.AltDirectorySeparatorChar);
 			}
 			return input;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the base directories.
+		/// </summary>
+		/// <value>The base directories.</value>
+		/// ------------------------------------------------------------------------------------
+		private string[] InternalBaseDirectories
+		{
+			get
+			{
+				var dirs = new string[baseDirectories.Items.Count];
+				int i = 0;
+				foreach (string str in baseDirectories.Items)
+					dirs[i++] = str;
+				return dirs;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
